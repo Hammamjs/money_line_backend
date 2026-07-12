@@ -17,4 +17,29 @@ export const usersController = {
 
     return res.status(200).json(users);
   }),
+
+  update: expressAsyncHandler(async (req, res) => {
+    const { username, phone } = req.body;
+    const { id } = req.params;
+    const user = await usersService.update(username, phone, id);
+
+    return res.status(204).json({
+      message: 'User Data updated',
+      user,
+    });
+  }),
+
+  findById: expressAsyncHandler(async (req, res) => {
+    const user = await usersService.findById(req.params.id);
+
+    return res.status(200).json(user);
+  }),
+
+  delete: expressAsyncHandler(async (req, res) => {
+    const deletedUser = await usersService.delete(req.params.id);
+
+    return res.status(204).json({
+      message: 'user deleted sucessefully',
+    });
+  }),
 };
