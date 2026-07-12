@@ -9,7 +9,7 @@ const prodError = (error, req, res, next) => {
 };
 
 const devError = (error, req, res, next) => {
-  return res.status(err.statusCode).json({
+  return res.status(error.statusCode).json({
     success: false,
     statusCode: error.statusCode,
     message: error.message,
