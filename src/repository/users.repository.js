@@ -23,19 +23,29 @@ export const usersRepository = {
     return res[0] ?? null;
   },
 
-  create: async ({ username, email, role, phone }) => {
-    return db
-      .insert(usersTable)
-      .values({
+  update: async ({ username, phone, id }) => {
+    const user = await db
+      .update(usersTable)
+      .set({
         username,
-        email,
         phone,
-        role,
       })
+      .where(eq(usersTable.id, id))
       .returning();
+
+    return user[0] ?? null;
   },
 
   getAll: async () => {
     return db.select().from(usersTable);
+  },
+
+  delete: async (id) => {
+    const user = await db
+      .delete(usersTable)
+      .where(eq(usersTable.id, id))
+      .returning();
+
+    return user[0] ?? null;
   },
 };
