@@ -16,7 +16,7 @@ export const createUserValidation = [
 ];
 
 export const updateUserValidation = [
-  check('id').notEmpty().isUUID(),
+  param('id').notEmpty().isUUID(),
   check('username')
     .isLength({ min: 3 })
     .withMessage('Username must be at least 3 charcters')

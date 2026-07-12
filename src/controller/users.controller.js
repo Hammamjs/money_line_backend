@@ -23,7 +23,7 @@ export const usersController = {
     const { id } = req.params;
     const user = await usersService.update(username, phone, id);
 
-    return res.status(204).json({
+    return res.status(200).json({
       message: 'User Data updated',
       user,
     });
@@ -39,7 +39,7 @@ export const usersController = {
     const deletedUser = await usersService.delete(req.params.id);
 
     return res.status(204).json({
-      message: 'user deleted sucessefully',
+      message: 'user deleted succesfully',
     });
   }),
 };

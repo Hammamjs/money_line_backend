@@ -39,7 +39,7 @@ export const usersService = {
   },
 
   findById: async (id) => {
-    if (id) throw Errors.badRequest('id params not provided');
+    if (!id) throw Errors.badRequest('id params not provided');
 
     const user = await usersRepository.getById(id);
 
