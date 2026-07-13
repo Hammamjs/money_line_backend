@@ -5,6 +5,7 @@ import path from 'path';
 import cors from 'cors';
 import { handleError } from './utils/globalError.js';
 import { UserRoutes } from './routes/users.routes.js';
+import { AuthRoutes } from './routes/auth.routes.js';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // routes
 
 app.use('/api/users', UserRoutes);
+app.use('/api/auth', AuthRoutes);
 
 // catch global error
 app.use(handleError);
