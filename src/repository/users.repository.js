@@ -13,6 +13,20 @@ export const usersRepository = {
     return res[0] ?? null;
   },
 
+  create: async ({ email, username, password, phone }) => {
+    const res = await db
+      .insert(usersTable)
+      .values({
+        email,
+        password,
+        phone,
+        username,
+      })
+      .returning();
+
+    return res[0] ?? null;
+  },
+
   getById: async (id) => {
     const res = await db
       .select()
@@ -23,13 +37,16 @@ export const usersRepository = {
     return res[0] ?? null;
   },
 
-  update: async ({ username, phone, id }) => {
+  update: async (id, { username, phone, refreshToken }) => {
+    const data = [];
+
+    if (username !== undefined) data.username = username;
+    if (phone !== undefined) data.phone = phone;
+    if (refreshToken !== undefined) data.refreshToken = refreshToken;
+
     const user = await db
       .update(usersTable)
-      .set({
-        username,
-        phone,
-      })
+      .set(data)
       .where(eq(usersTable.id, id))
       .returning();
 

@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres
+    container_name: line_postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_DB}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_URL: ${DATABASE_URL}
+  redis:
+    image: redis
+    container_name: line_redis
+    ports:
+      - '6379:6379'

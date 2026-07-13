@@ -3,15 +3,6 @@ import expressAsyncHandler from 'express-async-handler';
 import { usersService } from '../services/usersService.js';
 
 export const usersController = {
-  create: expressAsyncHandler(async (req, res) => {
-    const user = await usersService.create(req.body);
-
-    return res.status(201).json({
-      message: 'Account created successfully!',
-      user,
-    });
-  }),
-
   findAll: expressAsyncHandler(async (req, res) => {
     const users = await usersService.findAll();
 
@@ -21,7 +12,7 @@ export const usersController = {
   update: expressAsyncHandler(async (req, res) => {
     const { username, phone } = req.body;
     const { id } = req.params;
-    const user = await usersService.update(username, phone, id);
+    const user = await usersService.update(id, { username, phone });
 
     return res.status(200).json({
       message: 'User Data updated',

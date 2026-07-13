@@ -10,10 +10,10 @@ export const usersService = {
     return users.map(({ password, refreshToken, user }) => user);
   },
 
-  update: async (username, phone, id) => {
+  update: async (id, { username, phone }) => {
     if (!id) throw Errors.badRequest('Id not provided');
 
-    const user = await usersRepository.update({ username, phone, id });
+    const user = await usersRepository.update(id, { username, phone });
 
     if (!user) throw Errors.notFound('Failed to update no user found');
 

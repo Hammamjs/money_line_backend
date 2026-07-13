@@ -9,10 +9,7 @@ import {
 
 const router = Router();
 
-router
-  .route('/')
-  .get(usersController.findAll)
-  .post(createUserValidation, usersController.create);
+router.route('/').get(usersController.findAll);
 
 router
   .route('/:id')
