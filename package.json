@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "node --watch src/app.js",
-    "start": "node src/app.js"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,8 @@
   "devDependencies": {
     "@types/pg": "^8.20.0",
     "drizzle-kit": "^1.0.0-rc.4",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2",
     "tsx": "^4.23.0"
   }
 }

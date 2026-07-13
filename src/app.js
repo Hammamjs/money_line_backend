@@ -7,7 +7,6 @@ import { handleError } from './utils/globalError.js';
 import { UserRoutes } from './routes/users.routes.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 app.use(
   cors({
@@ -30,6 +29,4 @@ app.use('/api/users', UserRoutes);
 // catch global error
 app.use(handleError);
 
-app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}`);
-});
+export default app;
