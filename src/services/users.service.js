@@ -1,4 +1,4 @@
-import { Errors } from '../utils/map.errors.js';
+import { Errors } from '../errors/map.errors.js';
 import { usersRepository } from '../repository/users.repository.js';
 
 export const usersService = {

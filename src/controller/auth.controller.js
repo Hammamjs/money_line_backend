@@ -1,5 +1,5 @@
 import expressAsyncHandler from 'express-async-handler';
-import { authService } from '../services/authService.js';
+import { authService } from '../services/auth.service.js';
 import { cookieHelper } from '../utils/cookie.herlper.js';
 
 export const authController = {

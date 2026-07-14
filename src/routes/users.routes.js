@@ -5,7 +5,7 @@ import {
   deleteUserValidation,
   getByIdValidation,
   updateUserValidation,
-} from '../utils/validation/users.validation.js';
+} from '../validator/users.validation.js';
 
 const router = Router();
 

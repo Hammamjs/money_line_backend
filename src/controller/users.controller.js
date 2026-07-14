@@ -1,6 +1,6 @@
 import expressAsyncHandler from 'express-async-handler';
 
-import { usersService } from '../services/usersService.js';
+import { usersService } from '../services/users.service.js';
 
 export const usersController = {
   findAll: expressAsyncHandler(async (req, res) => {
