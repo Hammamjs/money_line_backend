@@ -25,9 +25,15 @@ export const authService = {
       id: user.id,
     });
 
-    await usersRepository.update(user.id, {
-      refreshToken: await hash(refreshToken, Number(process.env.HASH_SALT)),
-    });
+    const updatedRefreshToken = await authRepository.updateRefreshToken(
+      user.id,
+      {
+        refreshToken: await hash(refreshToken, Number(process.env.HASH_SALT)),
+      },
+    );
+
+    if (!updatedRefreshToken)
+      throw Errors.internal('Failed to update database');
 
     return {
       user: sanitizeUser(user),
