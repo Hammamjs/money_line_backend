@@ -1,4 +1,4 @@
-import { Errors } from '../utils/map.errors.js';
+import { Errors } from '../errors/map.errors.js';
 
 export const restrictedTo = (...roles) => {
   return (req, res, next) => {

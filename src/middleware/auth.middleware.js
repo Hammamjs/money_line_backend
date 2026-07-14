@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Errors } from '../utils/map.errors.js';
+import { Errors } from '../errors/map.errors.js';
 import jwt from 'jsonwebtoken';
 import { usersRepository } from '../repository/users.repository.js';
 
@@ -14,7 +14,7 @@ export const authMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
 
-    const user = await usersRepository.getById(decoded.id);
+    const user = await usersRepository.getById(decoded.userId);
 
     if (!user) return next(Errors.notFound('User not found'));
 
