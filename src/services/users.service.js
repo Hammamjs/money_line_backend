@@ -13,7 +13,16 @@ export const usersService = {
   update: async (id, { username, phone }) => {
     if (!id) throw Errors.badRequest('Id not provided');
 
-    const user = await usersRepository.update(id, { username, phone });
+    const data = { username, phone };
+
+    const filteredData = Object.fromEntries(
+      Object.entries(data).filter((v) => v != null),
+    );
+
+    if (Object.keys(filteredData).length === 0)
+      throw Errors.badRequest('Nothing to update');
+
+    const user = await usersRepository.update(id, filteredData);
 
     if (!user) throw Errors.notFound('Failed to update no user found');
 
