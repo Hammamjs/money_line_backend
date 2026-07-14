@@ -37,13 +37,7 @@ export const usersRepository = {
     return res[0] ?? null;
   },
 
-  update: async (id, { username, phone, refreshToken }) => {
-    const data = [];
-
-    if (username !== undefined) data.username = username;
-    if (phone !== undefined) data.phone = phone;
-    if (refreshToken !== undefined) data.refreshToken = refreshToken;
-
+  update: async (id, { username, phone }) => {
     const user = await db
       .update(usersTable)
       .set(data)
