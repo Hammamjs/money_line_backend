@@ -6,7 +6,7 @@ import {
   signupValidation,
   verifyResetCodeValidation,
   forgetPasswordValidation,
-} from '../utils/validation/auth.validation.js';
+} from '../validator/auth.validation.js';
 
 const router = Router();
 

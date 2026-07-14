@@ -1,13 +1,13 @@
 import 'dotenv/config';
 import { usersRepository } from '../repository/users.repository.js';
-import { Errors } from '../utils/map.errors.js';
+import { Errors } from '../errors/map.errors.js';
 import { hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { genTokens } from '../utils/gen_tokens.js';
+import { genTokens } from '../utils/generate.tokens.js';
 import { sanitizeUser } from '../utils/sanitize.user.js';
 import { randomInt, createHash } from 'crypto';
 import redisClient from '../config/redis.js';
-import { sendEmail } from '../utils/sendEmail.js';
+import { sendEmail } from '../utils/send.email.js';
 import { authRepository } from '../repository/auth.repostiory.js';
 
 export const authService = {
@@ -22,7 +22,7 @@ export const authService = {
     const { accessToken, refreshToken } = genTokens({
       email,
       role: user.role,
-      userId: user.id,
+      id: user.id,
     });
 
     await usersRepository.update(user.id, {
@@ -58,7 +58,7 @@ export const authService = {
     const { accessToken, refreshToken } = genTokens({
       email,
       role: user.role,
-      userId: user.id,
+      id: user.id,
     });
 
     await usersRepository.update(user.id, {
