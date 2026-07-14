@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { restrictedTo } from '../middleware/restricted_to.middleware.js';
+import { restrictedTo } from '../middleware/restricted-to.middleware.js';
 import { Role } from '../constant/role.js';
 import { currencyController } from '../controller/currency.controller.js';
 import {

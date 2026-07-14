@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   decimal,
   pgEnum,
@@ -73,5 +73,31 @@ export const exchangeRatesTable = pgTable(
       table.fromCurrencyId,
       table.toCurrencyId,
     ),
+  }),
+);
+
+export const currencyRelations = relations(currencyTable, ({ many }) => ({
+  exchangeRatesFrom: many(exchangeRatesTable, {
+    relationName: 'fromCurrency',
+  }),
+  exchangeRatesTo: many(exchangeRatesTable, {
+    relationName: 'toCurrency',
+  }),
+}));
+
+export const exchangeRatesTableRelations = relations(
+  exchangeRatesTable,
+  ({ one }) => ({
+    fromCurrency: one(currencyTable, {
+      fields: [exchangeRatesTable.fromCurrencyId],
+      references: [currencyTable.id],
+      relationName: 'fromCurrency',
+    }),
+
+    toCurrency: one(currencyTable, {
+      fields: [exchangeRatesTable.toCurrencyId],
+      references: [currencyTable.id],
+      relationName: 'toCurrency',
+    }),
   }),
 );
