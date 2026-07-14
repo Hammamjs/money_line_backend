@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createTransport } from 'nodemailer';
-import { HTMLTemplate } from './send_template.js';
+import { HTMLTemplate } from './send-template.js';
 
 export const sendEmail = async (user, resetCode) => {
   const transporter = createTransport({
