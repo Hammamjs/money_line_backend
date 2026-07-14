@@ -1,5 +1,5 @@
 import { check, param } from 'express-validator';
-import { validation } from '../../config/validation.js';
+import { validation } from '../config/validation.js';
 
 export const createUserValidation = [
   check('username')

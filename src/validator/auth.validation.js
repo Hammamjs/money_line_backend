@@ -1,5 +1,5 @@
 import { check } from 'express-validator';
-import { validation } from '../../config/validation.js';
+import { validation } from '../config/validation.js';
 
 export const signInValidation = [
   check('email')
