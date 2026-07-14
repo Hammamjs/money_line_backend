@@ -14,4 +14,13 @@ export const authRepository = {
 
     return user[0] ?? null;
   },
+
+  updateRefreshToken: async (id, { refreshToken }) => {
+    const [user] = await db
+      .update(usersTable)
+      .set({ refreshToken })
+      .returning();
+
+    return user ?? null;
+  },
 };
