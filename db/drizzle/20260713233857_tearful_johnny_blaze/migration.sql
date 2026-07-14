@@ -1,0 +1,1 @@
+ALTER TABLE "exchange_rates" ADD CONSTRAINT "exchange_rates_currency_pair_unique" UNIQUE("from_currency_id","to_currency_id");
