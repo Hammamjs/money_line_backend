@@ -1,5 +1,13 @@
 import { sql } from 'drizzle-orm';
-import { pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+  decimal,
+  pgEnum,
+  pgTable,
+  timestamp,
+  unique,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const userRole = pgEnum('user_role', ['admin', 'user']);
 
@@ -20,3 +28,50 @@ export const usersTable = pgTable('users', {
   }).defaultNow(),
   role: userRole('role').notNull().default('user'),
 });
+
+export const currencyTable = pgTable('currency', {
+  id: uuid('id')
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  name: varchar({ length: 20 }, 'name').notNull(),
+  code: varchar({ length: 3 }, 'code').notNull(),
+  symbol: varchar({ length: 100 }, 'symbol').notNull(),
+  createdAt: timestamp('created_at', {
+    withTimezone: true,
+  }).defaultNow(),
+
+  updatedAt: timestamp('updated_at', {
+    withTimezone: true,
+  }).defaultNow(),
+});
+
+export const exchangeRatesTable = pgTable(
+  'exchange_rates',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+
+    fromCurrencyId: uuid('from_currency_id')
+      .notNull()
+      .references(() => currencyTable.id),
+
+    toCurrencyId: uuid('to_currency_id')
+      .notNull()
+      .references(() => currencyTable.id),
+
+    rate: decimal('rate', {
+      precision: 18,
+      scale: 6,
+    }).notNull(),
+
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    uniqueCurrencyPair: unique('exchange_rates_currency_pair_unique').on(
+      table.fromCurrencyId,
+      table.toCurrencyId,
+    ),
+  }),
+);
