@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "refresh_token" SET DATA TYPE varchar(70)[] USING "refresh_token"::varchar(70)[];
