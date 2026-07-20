@@ -1,19 +1,22 @@
-import express from 'express';
 import 'dotenv/config';
+
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import helmet from 'helmet';
+
 import { fileURLToPath } from 'url';
 import path from 'path';
-import cors from 'cors';
 import { handleError } from './errors/global.error.js';
 import { routes } from './routes/index.js';
-import cookieParser from 'cookie-parser';
+import { registerOrderSocketEvent } from './socket/order.socket.js';
+import { corsOption } from './config/cors.options.js';
 
 const app = express();
 
-app.use(
-  cors({
-    origin: '*',
-  }),
-);
+app.use(cors(corsOption));
+
+app.use(helmet());
 
 // middlewares
 
