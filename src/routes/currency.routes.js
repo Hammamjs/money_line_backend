@@ -12,13 +12,15 @@ import {
 
 const router = Router();
 
-router.post(
-  '/',
-  createCurrencyValidation,
-  authMiddleware,
-  restrictedTo(Role.ADMIN),
-  currencyController.create,
-);
+router
+  .route('/')
+  .get(authMiddleware, restrictedTo(Role.ADMIN), currencyController.getAll)
+  .post(
+    createCurrencyValidation,
+    authMiddleware,
+    restrictedTo(Role.ADMIN),
+    currencyController.create,
+  );
 
 router
   .route('/:id')

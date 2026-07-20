@@ -28,6 +28,10 @@ export const currencyService = {
     return updatedCurrency;
   },
 
+  getAll: async () => {
+    return currencyRepository.getAll();
+  },
+
   getById: async (id) => {
     if (!id) throw Errors.badRequest('Id not provided');
 
