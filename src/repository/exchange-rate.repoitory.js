@@ -23,7 +23,7 @@ export const exchangeRateRepository = {
   },
 
   getAll: async () => {
-    return await db.query.exchangeRatesTable.findMany({
+    return db.query.exchangeRatesTable.findMany({
       with: {
         fromCurrency: true,
         toCurrency: true,
@@ -33,26 +33,22 @@ export const exchangeRateRepository = {
 
   getByCurrencyPair: async ({ fromCurrencyId, toCurrencyId }) => {
     return db.query.exchangeRatesTable.findFirst({
-      where: and(
-        eq(exchangeRatesTable.fromCurrencyId, fromCurrencyId),
-        eq(exchangeRatesTable.toCurrencyId, toCurrencyId),
-      ),
+      where: { fromCurrencyId, toCurrencyId },
       with: {
         fromCurrency: true,
         toCurrency: true,
       },
     });
-
-    return exchangeRate;
   },
 
   getById: async (id) => {
-    const [exchangeRate] = await db
-      .select()
-      .from(exchangeRatesTable)
-      .where(eq(exchangeRatesTable.id, id));
-
-    return exchangeRate ?? null;
+    return db.query.exchangeRatesTable.findFirst({
+      where: eq(exchangeRatesTable.id, id),
+      with: {
+        fromCurrency: true,
+        toCurrency: true,
+      },
+    });
   },
 
   delete: async (id) => {

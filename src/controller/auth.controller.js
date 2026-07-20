@@ -1,6 +1,6 @@
 import expressAsyncHandler from 'express-async-handler';
 import { authService } from '../services/auth.service.js';
-import { cookieHelper } from '../utils/cookie.herlper.js';
+import { setCookie, removeCookie } from '../utils/cookie.herlper.js';
 
 export const authController = {
   signIn: expressAsyncHandler(async (req, res) => {
@@ -8,7 +8,7 @@ export const authController = {
       req.body,
     );
 
-    cookieHelper(res, refreshToken);
+    setCookie(res, refreshToken);
 
     return res.status(200).json({ user, accessToken });
   }),
@@ -18,9 +18,33 @@ export const authController = {
       req.body,
     );
 
-    cookieHelper(res, refreshToken);
+    setCookie(res, refreshToken);
 
     return res.status(200).json({ user, accessToken });
+  }),
+
+  handleRefreshToken: expressAsyncHandler(async (req, res) => {
+    const { accessToken, refreshToken, user } =
+      await authService.handleRefreshToken({
+        refreshToken: req.cookies.refreshToken,
+      });
+
+    setCookie(res, refreshToken);
+
+    return res.status(200).json({ accessToken, user });
+  }),
+
+  logOut: expressAsyncHandler(async (req, res) => {
+    try {
+      await authService.logOut({
+        refreshToken: req.cookies.refreshToken,
+        user: req.user,
+      });
+    } finally {
+      removeCookie(res);
+    }
+
+    return res.status(200).json({ message: 'You logged out' });
   }),
 
   forgetPassword: expressAsyncHandler(async (req, res) => {

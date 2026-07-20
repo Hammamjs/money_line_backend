@@ -9,11 +9,14 @@ import { randomInt, createHash } from 'crypto';
 import redisClient from '../config/redis.js';
 import { sendEmail } from '../utils/send.email.js';
 import { authRepository } from '../repository/auth.repostiory.js';
+import { logWarn } from '../utils/log.type.js';
 
 export const authService = {
   singIn: async ({ email, password }) => {
     const user = await usersRepository.getByEmail(email);
     if (!user) throw Errors.notFound('Incorrect email or password');
+
+    logWarn(`${email} try to sign in`);
 
     const isMatched = await compare(password, user.password);
 
@@ -22,13 +25,20 @@ export const authService = {
     const { accessToken, refreshToken } = genTokens({
       email,
       role: user.role,
-      id: user.id,
+      userId: user.id,
     });
+
+    const newHashedRefreshToken = await hash(
+      refreshToken,
+      Number(process.env.HASH_SALT) || 12,
+    );
+
+    const refreshTokenArray = [...user.refreshToken, newHashedRefreshToken];
 
     const updatedRefreshToken = await authRepository.updateRefreshToken(
       user.id,
       {
-        refreshToken: await hash(refreshToken, Number(process.env.HASH_SALT)),
+        refreshToken: refreshTokenArray,
       },
     );
 
@@ -42,7 +52,7 @@ export const authService = {
     };
   },
 
-  signup: async ({ email, username, phone, password }) => {
+  signup: async ({ email, username, password }) => {
     if (!email || !password) throw Errors.badRequest('Missing required fields');
 
     const userResult = await usersRepository.getByEmail(email);
@@ -57,21 +67,22 @@ export const authService = {
     const user = await usersRepository.create({
       email,
       password: hashedPassword,
-      phone,
       username,
     });
 
     const { accessToken, refreshToken } = genTokens({
       email,
       role: user.role,
-      id: user.id,
+      userId: user.id,
     });
 
+    const hashedRefreshToken = await hash(
+      refreshToken,
+      Number(process.env.HASH_SALT) || 12,
+    );
+
     await usersRepository.update(user.id, {
-      refreshToken: await hash(
-        refreshToken,
-        Number(process.env.HASH_SALT) || 12,
-      ),
+      refreshToken: [hashedRefreshToken],
     });
 
     return {
@@ -79,6 +90,92 @@ export const authService = {
       refreshToken,
       accessToken,
     };
+  },
+
+  handleRefreshToken: async ({ refreshToken }) => {
+    if (!refreshToken) throw Errors.badRequest('Refresh token is required');
+
+    const decoded = await jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_SECRET,
+    );
+
+    const userFound = await usersRepository.getById(decoded.userId);
+
+    if (!userFound) {
+      const hackedUser = await usersRepository.getByEmail(decoded.email);
+      if (hackedUser)
+        await authRepository.updateRefreshToken(hackedUser.id, {
+          refreshToken: [],
+        });
+
+      throw Errors.forbidden('Invalid refresh token');
+    }
+
+    let matchedHash;
+
+    for (const rt of userFound.refreshToken) {
+      if (await compare(refreshToken, rt)) {
+        matchedHash = rt;
+        break;
+      }
+    }
+
+    if (!matchedHash) {
+      await authRepository.updateRefreshToken(decoded.id, {
+        refreshToken: [],
+      });
+      throw Errors.forbidden('Invalid refresh token');
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } = genTokens({
+      email: userFound.email,
+      userId: userFound.id,
+      role: userFound.role,
+    });
+
+    const oldRefreshTokens = userFound.refreshToken.filter(
+      (rt) => rt !== matchedHash,
+    );
+
+    const newHashedRefreshToken = await hash(
+      newRefreshToken,
+      Number(process.env.HASH_SALT || 12),
+    );
+
+    await authRepository.updateRefreshToken(userFound.userId, {
+      refreshToken: [...oldRefreshTokens, newHashedRefreshToken],
+    });
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+      user: sanitizeUser(userFound),
+    };
+  },
+
+  logOut: async ({ refreshToken, user }) => {
+    if (!refreshToken) throw Errors.badRequest('refresh token not found');
+
+    const decoded = await jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_SECRET,
+    );
+
+    if (!decoded) {
+      const hackedUser = await usersRepository.getByEmail(user.email);
+
+      if (hackedUser)
+        await authRepository.updateRefreshToken(hackedUser.id, {
+          refreshToken: [],
+        });
+
+      throw Errors.unauthorized('Invalid refresh token');
+    }
+
+    await authRepository.updateRefreshToken(decoded.id, { refreshToken: '' });
+
+    return;
   },
 
   forgetPassword: async ({ email }) => {

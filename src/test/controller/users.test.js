@@ -2,6 +2,15 @@ import request from 'supertest';
 import app from '../../app.js';
 import { randomUUID } from 'crypto';
 import { usersRepository } from '../../repository/users.repository.js';
+import { db } from '../../config/db.js';
+
+beforeEach(async () => {
+  await db.query('BEGIN');
+});
+
+afterEach(async () => {
+  await db.query('ROLLBACK');
+});
 
 describe('Test user API', () => {
   describe('GET /api/users/:id', () => {
