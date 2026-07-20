@@ -1,0 +1,1 @@
+ALTER TABLE "accounts" ADD COLUMN "iban" varchar(34) NOT NULL;

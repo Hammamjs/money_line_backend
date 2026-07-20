@@ -1,0 +1,1 @@
+ALTER TABLE "orders" RENAME COLUMN "transaction_account" TO "payment_provider";
