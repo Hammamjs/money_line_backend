@@ -26,6 +26,10 @@ export const currencyRepository = {
     return currency ?? null;
   },
 
+  getAll: async () => {
+    return db.query.currencyTable.findMany();
+  },
+
   getById: async (id) => {
     const [currency] = await db
       .select()
