@@ -14,7 +14,7 @@ const router = Router();
 
 router.post('/sign-in', rateLimiter(), signInValidation, authController.signIn);
 
-router.post('/sign-up', rateLimiter, signupValidation, authController.signup);
+router.post('/sign-up', rateLimiter(), signupValidation, authController.signup);
 
 router.post('/log-out', authMiddleware, authController.logOut);
 
