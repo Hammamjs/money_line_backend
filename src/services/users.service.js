@@ -1,5 +1,6 @@
 import { Errors } from '../errors/map.errors.js';
 import { usersRepository } from '../repository/users.repository.js';
+import { sanitizeUser } from '../utils/sanitize.user.js';
 
 export const usersService = {
   findAll: async () => {
@@ -7,28 +8,21 @@ export const usersService = {
 
     if (!users.length) return [];
 
-    return users.map(({ password, refreshToken, user }) => user);
+    return users.map((user) => sanitizeUser(user));
   },
 
-  update: async (id, { username, phone }) => {
+  update: async (id, { username }) => {
     if (!id) throw Errors.badRequest('Id not provided');
 
-    const data = { username, phone };
+    if (!username) throw Errors.badRequest('user name is required to update');
 
-    const filteredData = Object.fromEntries(
-      Object.entries(data).filter((v) => v != null),
-    );
-
-    if (Object.keys(filteredData).length === 0)
-      throw Errors.badRequest('Nothing to update');
-
-    const user = await usersRepository.update(id, filteredData);
+    const user = await usersRepository.update(id, { username });
 
     if (!user) throw Errors.notFound('Failed to update no user found');
 
-    const { password, refreshToken, ...safeUser } = user;
-
-    return safeUser;
+    return {
+      user: sanitizeUser(user),
+    };
   },
 
   findById: async (id) => {
@@ -38,9 +32,7 @@ export const usersService = {
 
     if (!user) throw Errors.notFound('No user found');
 
-    const { password, refreshToken, ...safeUser } = user;
-
-    return safeUser;
+    return { user: sanitizeUser(user) };
   },
 
   delete: async (id) => {
@@ -51,6 +43,8 @@ export const usersService = {
     if (!deletedUser)
       throw Errors.notFound(`User not found with this id ${id}`);
 
-    return;
+    return {
+      user: sanitizeUser(deletedUser),
+    };
   },
 };

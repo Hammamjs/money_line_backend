@@ -4,22 +4,17 @@ import { eq } from 'drizzle-orm';
 
 export const usersRepository = {
   getByEmail: async (email) => {
-    const res = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.email, email))
-      .limit(1);
+    const res = await db.query.usersTable.findFirst({ where: { email } });
 
-    return res[0] ?? null;
+    return res ?? null;
   },
 
-  create: async ({ email, username, password, phone }) => {
+  create: async ({ email, username, password }) => {
     const res = await db
       .insert(usersTable)
       .values({
         email,
         password,
-        phone,
         username,
       })
       .returning();
@@ -28,16 +23,10 @@ export const usersRepository = {
   },
 
   getById: async (id) => {
-    const res = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.id, id))
-      .limit(1);
-
-    return res[0] ?? null;
+    return db.query.usersTable.findFirst({ where: { id } });
   },
 
-  update: async (id, { username, phone }) => {
+  update: async (id, data) => {
     const user = await db
       .update(usersTable)
       .set(data)
@@ -48,7 +37,7 @@ export const usersRepository = {
   },
 
   getAll: async () => {
-    return db.select().from(usersTable);
+    return db.query.usersTable.findMany();
   },
 
   delete: async (id) => {
