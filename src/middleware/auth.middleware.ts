@@ -1,9 +1,17 @@
 import 'dotenv/config';
-import { Errors } from '../errors/map.errors.js';
+import { Errors } from '../errors/map-errors.js';
 import jwt from 'jsonwebtoken';
+import { usersService } from '../services/users.service.js';
+import type { NextFunction, Response, Request } from 'express';
 import { usersRepository } from '../repository/users.repository.js';
 
-export const authMiddleware = async (req, res, next) => {
+const { JsonWebTokenError, TokenExpiredError } = jwt;
+
+export const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -12,24 +20,28 @@ export const authMiddleware = async (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
 
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
+    if (!token) return next(new Error('Token is missing'));
+
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET!) as {
+      userId: string;
+    };
 
     const user = await usersRepository.getById(decoded.userId);
 
     if (!user) return next(Errors.notFound('User not found'));
 
-    req.user = {
-      userId: user.id,
+    req.User = {
+      id: user.id,
       email: user.email,
       role: user.role,
     };
 
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError')
+    if (error instanceof TokenExpiredError)
       return next(Errors.unauthorized('Token expired'));
 
-    if (error.name === 'JsonWebTokenError')
+    if (error instanceof JsonWebTokenError)
       return next(Errors.unauthorized('invalid token'));
 
     next(error);
