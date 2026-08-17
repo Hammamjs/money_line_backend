@@ -24,18 +24,21 @@ const relations = defineRelations(
         to: r.currencyTable.id,
         alias: 'fromCurrency',
       }),
+
       toCurrency: r.one.currencyTable({
         from: r.exchangeRatesTable.toCurrencyId,
         to: r.currencyTable.id,
         alias: 'toCurrency',
       }),
     },
+
     currencyTable: {
       exchangeRatesFrom: r.many.exchangeRatesTable({
         from: r.currencyTable.id,
         to: r.exchangeRatesTable.fromCurrencyId,
         alias: 'exchangeRatesFrom',
       }),
+
       exchangeRatesTo: r.many.exchangeRatesTable({
         from: r.currencyTable.id,
         to: r.exchangeRatesTable.toCurrencyId,
@@ -49,6 +52,18 @@ const relations = defineRelations(
         to: r.usersTable.id,
         alias: 'user',
       }),
+
+      fromCurrency: r.one.currencyTable({
+        from: r.ordersTable.fromCurrencyId,
+        to: r.currencyTable.id,
+        alias: 'fromCurrency',
+      }),
+
+      toCurrency: r.one.currencyTable({
+        from: r.ordersTable.toCurrencyId,
+        to: r.currencyTable.id,
+        alias: 'toCurrency',
+      }),
     },
 
     usersTable: {
@@ -58,24 +73,24 @@ const relations = defineRelations(
         alias: 'orders',
       }),
 
-      usersTable: {
-        notifications: r.many.notificationsTable({
-          from: r.usersTable.id,
-          to: r.notificationsTable.userId,
-        }),
-      },
-      notificationsTable: {
-        user: r.one.usersTable({
-          from: r.usersTable.id,
-          to: r.notificationsTable.userId,
-        }),
-      },
-    },
+      notifications: r.many.notificationsTable({
+        from: r.usersTable.id,
+        to: r.notificationsTable.userId,
+        alias: 'notifications',
+      }),
 
-    usersTable: {
       accounts: r.many.accountsTable({
         from: r.usersTable.id,
         to: r.accountsTable.userId,
+        alias: 'accounts',
+      }),
+    },
+
+    notificationsTable: {
+      user: r.one.usersTable({
+        from: r.notificationsTable.userId,
+        to: r.usersTable.id,
+        alias: 'user',
       }),
     },
 
@@ -83,6 +98,7 @@ const relations = defineRelations(
       user: r.one.usersTable({
         from: r.accountsTable.userId,
         to: r.usersTable.id,
+        alias: 'user',
       }),
     },
   }),

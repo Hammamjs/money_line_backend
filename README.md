@@ -1,6 +1,6 @@
 # Money Line 💱
 
-Money Line is a bilingual currency conversion and money transfer management system built with **Node.js**, **Drizzle ORM**, and **PostgreSQL**.
+Money Line is a bilingual currency conversion and money transfer management system built with **Node.js** [TS], **Drizzle ORM**, and **PostgreSQL**.
 
 The application allows users to send money through supported banks and request currency conversion into their preferred currency. Admin users manage conversion requests, verify transactions, and complete currency exchanges based on user selections.
 
