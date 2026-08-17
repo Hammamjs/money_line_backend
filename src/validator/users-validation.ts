@@ -32,8 +32,20 @@ export const updateUserValidation = [
   validation,
 ];
 
+export const updateRoleValidation = [
+  check('role')
+    .isString()
+    .isIn(['admin', 'user'])
+    .withMessage('Invalid role provided'),
+  param('id').isUUID().withMessage('Invalid id format'),
+];
+
 export const getByIdValidation = [
-  param('id').notEmpty().isUUID().withMessage('Id param must be uuid format'),
+  param('id')
+    .notEmpty()
+    .isUUID()
+    .withMessage('id is required')
+    .withMessage('Id param must be uuid format'),
   validation,
 ];
 

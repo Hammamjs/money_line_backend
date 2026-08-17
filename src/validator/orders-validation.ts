@@ -7,6 +7,11 @@ export const createOrderValidation = [
     .withMessage('Payment provider is required')
     .isLength({ min: 2 })
     .withMessage('Payment provider must be at least 2 charcters'),
+  check('transactorId')
+    .notEmpty()
+    .withMessage('transactorId is required')
+    .isUUID('4')
+    .withMessage('Invalid id format'),
   check('phone').trim().notEmpty().withMessage('Phone number is required'),
   check('accountHolderName')
     .trim()
@@ -22,7 +27,12 @@ export const createOrderValidation = [
     .notEmpty()
     .withMessage('To asset id is required')
     .isUUID()
-    .withMessage('Invalid to asset id format'),
+    .withMessage('Invalid to asset id format')
+    .custom((v, { req }) => {
+      if (v === req.body.fromAssetId)
+        throw new Error('fromAssetId and toAssetId cannot be the same asset');
+      return true;
+    }),
 
   check('note')
     .optional()
@@ -75,15 +85,6 @@ export const getOrderByIdValidation = [
   param('id')
     .notEmpty()
     .withMessage('Id is required')
-    .isUUID()
-    .withMessage('Invalid id format'),
-  validation,
-];
-
-export const getOrderByUserIdValidation = [
-  param('userId')
-    .notEmpty()
-    .withMessage('User id is required')
     .isUUID()
     .withMessage('Invalid id format'),
   validation,
