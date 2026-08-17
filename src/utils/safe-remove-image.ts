@@ -1,13 +1,13 @@
-import { removeImage } from '../services/upload.image.service.js';
+import { removeImage } from '../services/upload-image.service.js';
 
-export const safeRemoveImage = async (image) => {
+export const safeRemoveImage = async (image: string) => {
   const TRANSACTION_PROOF_BUCKET = process.env.BUCKET_NAME;
 
   if (!TRANSACTION_PROOF_BUCKET) {
     throw new Error('BUCKET_NAME is required');
   }
 
-  if (image) return;
+  if (!image) return;
 
   try {
     await removeImage({

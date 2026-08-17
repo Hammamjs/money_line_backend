@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import { createTransport } from 'nodemailer';
 import { HTMLTemplate } from './send-template.js';
+import type { User } from '../types/users.js';
 
-export const sendEmail = async (user, resetCode) => {
+export const sendEmail = async (user: User, resetCode: string) => {
   const transporter = createTransport({
     service: process.env.SERVICE_PROVIDER,
     auth: {
