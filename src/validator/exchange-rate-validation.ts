@@ -1,11 +1,26 @@
-import { check, param } from 'express-validator';
+import { check, param, query } from 'express-validator';
 import { validation } from '../config/validation.js';
 
 export const getExchangeRateByIdValidation = [
   check('id')
-    .exists({ checkNull: true })
+    .notEmpty()
     .withMessage('id is requried')
     .bail()
+    .isUUID()
+    .withMessage('Invalid id format'),
+  validation,
+];
+
+export const getCurrencyPairValidation = [
+  query('fromId')
+    .notEmpty()
+    .withMessage('From id is requried')
+    .isUUID()
+    .withMessage('Invalid id format'),
+
+  query('toId')
+    .notEmpty()
+    .withMessage('To id is requried')
     .isUUID()
     .withMessage('Invalid id format'),
   validation,
@@ -39,16 +54,9 @@ export const createExchangeRateValidation = [
 ];
 
 export const updateExchangeRateValidation = [
-  check('id')
-    .exists({ checkNull: true })
-    .withMessage('id is requried')
-    .bail()
-    .isUUID()
-    .withMessage('Invalid id format'),
+  param('id').isUUID().withMessage('Invalid id format'),
   check('rate')
-    .exists({ checkNull: true })
-    .withMessage('id is requried')
-    .bail()
+    .optional()
     .isFloat({ gt: 0 })
     .withMessage('Rate must be greater 0'),
   validation,

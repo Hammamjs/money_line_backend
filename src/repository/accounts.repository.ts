@@ -1,36 +1,49 @@
 import { eq } from 'drizzle-orm';
 import { accountsTable } from '../../db/schema.js';
 import { db } from '../config/db.js';
+import type {
+  CreateAccountRecord,
+  UpdateAccountInput,
+} from '../types/account.js';
 
 export const accountsRepository = {
   create: async ({
     userId,
     accountNumber,
     iban,
-    phoneNumber,
+    phone,
     bankName,
     ibanHash,
     accountNumberHash,
+    label,
+    type,
+    extraInfo,
     isDefault,
-  }) => {
+  }: CreateAccountRecord) => {
     const [account] = await db
       .insert(accountsTable)
       .values({
         userId,
         accountNumber,
         iban,
-        phoneNumber,
         bankName,
         accountNumberHash,
         ibanHash,
         isDefault,
+        label,
+        extraInfo,
+        type,
+        phone,
       })
       .returning();
 
     return account ?? null;
   },
 
-  exists: async ({ ibanHash, accountNumberHash }) => {
+  exists: async ({
+    ibanHash,
+    accountNumberHash,
+  }: Pick<CreateAccountRecord, 'ibanHash' | 'accountNumberHash'>) => {
     return (
       db.query.accountsTable.findFirst({
         where: { ibanHash, accountNumberHash },
@@ -42,13 +55,25 @@ export const accountsRepository = {
     );
   },
 
-  getAll: async (userId) => {
+  getAll: async (userId: string) => {
     return db.query.accountsTable.findMany({ where: { userId } });
   },
 
-  getById: async (id) => {
+  getByUserId: async (userId: string) => {
     return (
-      db.query.accountsTable.findFirst({
+      db.query.accountsTable.findMany({
+        where: { userId },
+        columns: {
+          ibanHash: false,
+          accountNumberHash: false,
+        },
+      }) ?? null
+    );
+  },
+
+  getById: async (id: string) => {
+    return (
+      db.query.accountsTable.findMany({
         where: { id },
         columns: {
           ibanHash: false,
@@ -58,7 +83,7 @@ export const accountsRepository = {
     );
   },
 
-  update: async (id, data) => {
+  update: async (id: string, data: UpdateAccountInput) => {
     const [account] = await db
       .update(accountsTable)
       .set({ ...data, updatedAt: new Date() })
@@ -68,7 +93,7 @@ export const accountsRepository = {
     return account ?? null;
   },
 
-  delete: async (id) => {
+  delete: async (id: string) => {
     const [account] = await db
       .delete(accountsTable)
       .where(eq(accountsTable.id, id))

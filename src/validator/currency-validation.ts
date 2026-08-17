@@ -33,6 +33,16 @@ export const updateCurrencyValidation = [
     .isLength({ min: 1, max: 1 })
     .withMessage('Symbol must be one character'),
 
+  check('flag')
+    .optional()
+    .isString()
+    .withMessage('CUrrency flag must be string'),
+
+  check('isActive')
+    .optional()
+    .isBoolean()
+    .withMessage('isActive must be boolean value'),
+
   validation,
 ];
 
@@ -57,6 +67,12 @@ export const createCurrencyValidation = [
     .trim()
     .isLength({ max: 1 })
     .withMessage('Symbol must be one character'),
+
+  check('flag')
+    .notEmpty()
+    .withMessage('Currency flag is required')
+    .isString()
+    .withMessage('CUrrency flag must be string'),
 
   validation,
 ];
