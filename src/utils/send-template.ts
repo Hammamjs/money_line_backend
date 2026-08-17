@@ -1,4 +1,4 @@
-export const HTMLTemplate = (username, resetCode) => {
+export const HTMLTemplate = (username: string, resetCode: string) => {
   return `
 <!DOCTYPE html>
 <html lang="en">

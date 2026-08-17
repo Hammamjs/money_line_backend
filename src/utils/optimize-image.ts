@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 
-const optimizeImage = async (image) => {
+const optimizeImage = async (image: Buffer) => {
   return await sharp(image)
     .resize({
       width: 1200,
