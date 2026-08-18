@@ -97,6 +97,8 @@ export const authController = {
         const { accessToken, refreshToken, user } =
           await credentialsService.processGoogleService(passportUser);
 
+        console.log(refreshToken);
+
         setCookie(res, refreshToken);
 
         const encodedUser = encodeURIComponent(JSON.stringify(user));
