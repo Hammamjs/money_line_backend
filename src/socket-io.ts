@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import jwt from 'jsonwebtoken';
 import { Server as SocketIoServer } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import type { JWTPaylaods } from './types/auth.js';
+import type { JWTPayloads } from './types/auth.js';
 
 let io: SocketIoServer;
 export const initializeSocket = (server: HttpServer) => {
@@ -21,7 +21,7 @@ export const initializeSocket = (server: HttpServer) => {
 
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET!);
 
-      socket.user = decoded as JWTPaylaods;
+      socket.user = decoded as JWTPayloads;
 
       return next();
     } catch (err) {
