@@ -2,7 +2,7 @@ import { Errors } from '@/src/errors/map-errors.js';
 import { authRepository } from '@/src/repository/auth.repository.js';
 import { usersRepository } from '@/src/repository/users.repository.js';
 import type {
-  JWTPaylaods,
+  JWTPayloads,
   LogoutInput,
   SignInInput,
   SignUpInput,
@@ -182,7 +182,7 @@ export const credentialsService = {
     const decoded = jwt.verify(
       refreshToken,
       process.env.JWT_REFRESH_TOKEN_SECRET!,
-    ) as JWTPaylaods;
+    ) as JWTPayloads;
 
     if (!decoded) {
       const hackedUser = await usersRepository.getByEmail(user.email);

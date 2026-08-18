@@ -31,7 +31,7 @@ export type ResetCodeInput = {
   newPassword: string;
 };
 
-export type JWTPaylaods = {
+export type JWTPayloads = {
   role: Roles;
   id: string;
   email: string;
