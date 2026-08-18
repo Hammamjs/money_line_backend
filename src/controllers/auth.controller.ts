@@ -6,6 +6,7 @@ import {
 } from '@/src/services/auth/index.js';
 import { setCookie, removeCookie } from '../utils/cookie-helper.js';
 import type { Response, Request, NextFunction } from 'express';
+import { Errors } from '../errors/map-errors.js';
 
 export const authController = {
   signIn: expressAsyncHandler(async (req: Request, res: Response) => {
@@ -101,6 +102,9 @@ export const authController = {
         const encodedUser = encodeURIComponent(JSON.stringify(user));
 
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+        if (!frontendUrl) throw Errors.internal('Redirection is missing');
+
         return res.redirect(
           `${frontendUrl}/auth/callback?accessToken=${accessToken}&user=${encodedUser}`,
         );
