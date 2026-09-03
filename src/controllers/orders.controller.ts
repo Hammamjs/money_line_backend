@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import { ordersService } from '../services/orders.service.js';
-import type { OrderSatatusInput, UpdateOrderInput } from '../types/orders.js';
+import type { OrderStatusInput, UpdateOrderInput } from '../types/orders.js';
 
 export const ordersController = {
   create: expressAsyncHandler(async (req: Request, res: Response) => {
@@ -28,7 +28,7 @@ export const ordersController = {
 
   updateStatus: expressAsyncHandler(
     async (
-      req: Request<{ id: string }, {}, { status: OrderSatatusInput }>,
+      req: Request<{ id: string }, {}, { status: OrderStatusInput }>,
       res: Response,
     ) => {
       const order = await ordersService.updateStatus(
