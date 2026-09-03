@@ -3,7 +3,7 @@ import { ordersTable } from '../../db/schema.js';
 import { db } from '../config/db.js';
 import type {
   CreateOrderRecord,
-  OrderSatatusInput,
+  OrderStatusInput,
   UpdateOrderInput,
 } from '../types/orders.js';
 
@@ -42,7 +42,7 @@ export const ordersRepository = {
   updateStatus: async (
     id: string,
     transactorId: string,
-    { status }: { status: OrderSatatusInput },
+    { status }: { status: OrderStatusInput },
   ) => {
     const [order] = await db
       .update(ordersTable)
@@ -83,7 +83,7 @@ export const ordersRepository = {
     status,
     transactorId,
   }: {
-    status: OrderSatatusInput | undefined;
+    status: OrderStatusInput | undefined;
     transactorId: string | undefined;
   }) => {
     return db.query.ordersTable.findMany({
@@ -92,6 +92,20 @@ export const ordersRepository = {
         ...(transactorId !== undefined && { transactorId }),
       },
       with: {
+        toCurrency: {
+          columns: {
+            id: true,
+            flag: true,
+            code: true,
+          },
+        },
+        fromCurrency: {
+          columns: {
+            id: true,
+            flag: true,
+            code: true,
+          },
+        },
         user: {
           columns: {
             id: true,

@@ -18,7 +18,7 @@ router.use(authMiddleware);
 
 router
   .route('/')
-  .get(restrictedTo(Role.ADMIN, Role.SUPERADMIN), ordersController.getAll)
+  .get(restrictedTo(Role.ADMIN, Role.SUPER_ADMIN), ordersController.getAll)
   .post(
     restrictedTo(Role.USER),
     upload.single('transactionProof'),
@@ -30,7 +30,7 @@ router.get('/user', restrictedTo(Role.USER), ordersController.getByUserId);
 
 router.patch(
   '/update-status/:id',
-  restrictedTo(Role.ADMIN, Role.SUPERADMIN),
+  restrictedTo(Role.ADMIN, Role.SUPER_ADMIN),
   updateStatusValidation,
   ordersController.updateStatus,
 );

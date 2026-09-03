@@ -15,7 +15,7 @@ export const authController = {
 
     setCookie(res, refreshToken);
 
-    res.status(200).json({ user, accessToken });
+    res.status(200).json({ user, accessToken, refreshToken });
   }),
 
   signup: expressAsyncHandler(async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ export const authController = {
 
     setCookie(res, refreshToken);
 
-    res.status(200).json({ user, accessToken });
+    res.status(200).json({ user, accessToken, refreshToken });
   }),
 
   updatePassword: expressAsyncHandler(async (req: Request, res: Response) => {
@@ -40,14 +40,16 @@ export const authController = {
   handleRefreshToken: expressAsyncHandler(
     async (req: Request, res: Response) => {
       try {
+        // i have update this to align with mobile auth as well
+        const incomingToken = req.cookies.refreshToken || req.body.refreshToken;
         const { accessToken, refreshToken, user } =
           await credentialsService.handleRefreshToken({
-            refreshToken: req.cookies.refreshToken,
+            refreshToken: incomingToken,
           });
 
         setCookie(res, refreshToken);
 
-        res.status(200).json({ accessToken, user });
+        res.status(200).json({ accessToken, user, refreshToken });
       } catch (err) {
         removeCookie(res);
         throw err;

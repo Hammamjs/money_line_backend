@@ -8,7 +8,7 @@ import type {
 import {
   decryptedAccount,
   decryptedAccounts,
-} from '../utils/decrypte-account.js';
+} from '../utils/decrypt-account.js';
 import { cipher, decipher } from '../utils/encryption.js';
 import { hash } from '../utils/hash.js';
 

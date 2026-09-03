@@ -17,7 +17,7 @@ router.get('/', usersController.findAll);
 router.patch(
   '/update/role',
   authMiddleware,
-  restrictedTo(Role.SUPERADMIN),
+  restrictedTo(Role.SUPER_ADMIN),
   updateRoleValidation,
   usersController.updateRole,
 );

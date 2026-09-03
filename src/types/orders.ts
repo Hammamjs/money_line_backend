@@ -33,4 +33,4 @@ export type UpdateOrderInput = {
   buffer?: Buffer;
 };
 
-export type OrderSatatusInput = 'pending' | 'success';
+export type OrderStatusInput = 'pending' | 'success';

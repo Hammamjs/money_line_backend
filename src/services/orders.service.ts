@@ -9,7 +9,7 @@ import { EVENTS } from '../events/app-events-name.js';
 import { exchangeRateRepository } from '../repository/exchange-rate.repository.js';
 import type {
   CreateOrderInput,
-  OrderSatatusInput,
+  OrderStatusInput,
   UpdateOrderInput,
 } from '../types/orders.js';
 
@@ -157,7 +157,7 @@ export const ordersService = {
   updateStatus: async (
     id: string,
     transactorId: string,
-    { status }: { status?: OrderSatatusInput },
+    { status }: { status?: OrderStatusInput },
   ) => {
     if (status && !ORDER_STATUS.includes(status))
       throw Errors.badRequest('Invalid status');
@@ -177,7 +177,7 @@ export const ordersService = {
     status,
     transactorId,
   }: {
-    status?: OrderSatatusInput;
+    status?: OrderStatusInput;
     transactorId?: string;
   }) => {
     if (status && !ORDER_STATUS.includes(status))
