@@ -52,10 +52,10 @@ export const usersController = {
 
   delete: expressAsyncHandler(
     async (req: Request<{ id: string }>, res: Response) => {
-      const deletedUser = await usersService.delete(req.params.id);
+      await usersService.delete(req.params.id);
 
       res.status(204).json({
-        message: 'user deleted succesfully',
+        message: 'user deleted successfully',
       });
     },
   ),
