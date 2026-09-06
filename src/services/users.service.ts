@@ -71,6 +71,14 @@ export const usersService = {
   delete: async (id: string) => {
     if (!id) throw Errors.badRequest('id params not provided');
 
+    // we need to put guard to prevent removing super admin role;
+    const user = await usersRepository.getById(id);
+
+    if (!user) throw Errors.notFound('User not found');
+
+    if (user.role === 'super_admin')
+      throw Errors.forbidden('Super admin cannot be deleted');
+
     const deletedUser = await usersRepository.delete(id);
 
     if (!deletedUser)
