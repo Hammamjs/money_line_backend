@@ -36,7 +36,7 @@ export const auditAuth = (event: AuditEvent, context: AuditContext = {}) => {
     event.includes('CONFLICT') ||
     event.includes('INVALID')
   ) {
-    logWarn(`[Auth Warnign] ${event}`, payload);
+    logWarn(`[Auth Warning] ${event}`, payload);
   } else {
     logInfo(`Auth Event ${event}`, payload);
   }

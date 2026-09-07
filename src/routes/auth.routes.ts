@@ -7,6 +7,7 @@ import {
   verifyResetCodeValidation,
   forgetPasswordValidation,
   updatePasswordValidation,
+  googleMobileValidation,
 } from '../validator/auth-validation.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { rateLimiter } from '../security/rate-limiter.js';
@@ -30,6 +31,12 @@ router.get(
     failureRedirect: '/login?error=google_auth_failed',
   }),
   authController.googleAuth,
+);
+
+router.post(
+  '/google/mobile',
+  googleMobileValidation,
+  authController.googleMobileAuth,
 );
 
 router.post('/sign-in', signInValidation, authController.signIn);

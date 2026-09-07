@@ -17,7 +17,7 @@ passport.use(
         GOOGLE_CALLBACK_URL ||
         'http://localhost:3000/api/auth/sign-in/google/callback',
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (_accessToken, _refreshToken, profile, done) => {
       try {
         let [user] = await db
           .select()

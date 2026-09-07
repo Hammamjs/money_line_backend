@@ -7,6 +7,7 @@ import {
 import { setCookie, removeCookie } from '../utils/cookie-helper.js';
 import type { Response, Request, NextFunction } from 'express';
 import { Errors } from '../errors/map-errors.js';
+import { verifyGoogleIdToken } from '../utils/google-mobile.js';
 
 export const authController = {
   signIn: expressAsyncHandler(async (req: Request, res: Response) => {
@@ -117,4 +118,12 @@ export const authController = {
       }
     },
   ),
+
+  googleMobileAuth: expressAsyncHandler(async (req, res) => {
+    const { idToken } = req.body;
+
+    const response = await credentialsService.googleMobileSignIn(idToken);
+
+    res.status(200).json(response);
+  }),
 };
