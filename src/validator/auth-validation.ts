@@ -26,7 +26,7 @@ export const updatePasswordValidation = [
 
   check('confirmPassword')
     .notEmpty()
-    .withMessage('Confrim password is required')
+    .withMessage('Confirm password is required')
     .custom((val, { req }) => {
       if (val !== req.body.newPassword) throw new Error('Passwords must match');
       return true;
@@ -46,7 +46,7 @@ export const signupValidation = [
     .notEmpty()
     .withMessage('Password is required')
     .isLength({ min: 8 })
-    .withMessage('password must be at least 8 charcters')
+    .withMessage('password must be at least 8 characters')
     .isStrongPassword()
     .withMessage('Password must be strong'),
 
@@ -60,9 +60,9 @@ export const signupValidation = [
 
   check('username')
     .notEmpty()
-    .withMessage('username is requried')
+    .withMessage('username is required')
     .isLength({ min: 3 })
-    .withMessage('username must be at least 3 charcters')
+    .withMessage('username must be at least 3 characters')
     .trim(),
 
   check('phone').optional(),
@@ -109,11 +109,21 @@ export const resetPasswordValidation = [
 
   check('confirmPassword')
     .notEmpty()
-    .withMessage('Password confirmation is requred')
+    .withMessage('Password confirmation is required')
     .custom((v, { req }) => {
       if (v !== req.body.newPassword) throw new Error('Passwords do not match');
       return true;
     }),
+
+  validation,
+];
+
+export const googleMobileValidation = [
+  check('idToken')
+    .notEmpty()
+    .withMessage('Id token is required')
+    .isString()
+    .withMessage('Must be a string'),
 
   validation,
 ];

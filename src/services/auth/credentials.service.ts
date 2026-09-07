@@ -13,6 +13,10 @@ import { genTokens } from '@/src/utils/generate-tokens.js';
 import { hashToken } from '@/src/utils/hash-token.js';
 import { compare, hash } from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { verifyGoogleIdToken } from '@/src/utils/google-mobile.js';
+import { db } from '@/src/config/db.js';
+import { usersTable } from '@/db/schema.js';
+import { eq } from 'drizzle-orm';
 
 export const credentialsService = {
   authSignIn: async ({ email, password }: SignInInput) => {
@@ -211,23 +215,13 @@ export const credentialsService = {
     return;
   },
 
-  processGoogleService: async (userPayload: {
-    email: string;
-    id: string;
-    role: Roles;
-  }) => {
+  processGoogleService: async (userPayload: { email: string; id: string }) => {
     const userId = userPayload.id;
 
     if (!userId) {
       auditAuth(AuditEvent.SIGNIN_FAILED_NO_USER, { userId });
       throw Errors.notFound('User ID is missing from OAuth payload');
     }
-
-    const { accessToken, refreshToken } = genTokens({
-      userId: userPayload.id,
-      email: userPayload.email,
-      role: userPayload.role,
-    });
 
     const user = await usersRepository.getById(userPayload.id);
 
@@ -238,6 +232,12 @@ export const credentialsService = {
       });
       throw Errors.notFound('User not found');
     }
+
+    const { accessToken, refreshToken } = genTokens({
+      userId: userPayload.id,
+      email: userPayload.email,
+      role: user.role,
+    });
 
     const hashedRefreshToken = hashToken(refreshToken);
 
@@ -255,5 +255,56 @@ export const credentialsService = {
       accessToken,
       refreshToken,
     };
+  },
+
+  googleMobileSignIn: async (idToken: string) => {
+    if (!idToken) throw Errors.badRequest('Id token not provided');
+
+    const googleUser = await verifyGoogleIdToken(idToken);
+
+    let [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.googleId, googleUser.id));
+
+    if (!user) {
+      if (!googleUser.email) {
+        throw Errors.badRequest(
+          'Google account does not have an email address',
+        );
+      }
+
+      [user] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, googleUser.id));
+
+      if (user) {
+        [user] = await db
+          .update(usersTable)
+          .set({ googleId: googleUser.id, updatedAt: new Date() })
+          .where(eq(usersTable.googleId, user.id))
+          .returning();
+      } else {
+        [user] = await db
+          .insert(usersTable)
+          .values({
+            role: 'user',
+            googleId: googleUser.id,
+            email: googleUser.email,
+            username: googleUser.username,
+          })
+          .returning();
+      }
+    }
+
+    if (!user) {
+      throw new Error('Failed to create or find user');
+    }
+
+    return credentialsService.processGoogleService({
+      email: googleUser.email,
+      id: user.id,
+    });
   },
 };
