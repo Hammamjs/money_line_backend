@@ -1,6 +1,6 @@
 import { db } from '../config/db.js';
-import { usersTable } from '../../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { accountsTable, usersTable } from '../../db/schema.js';
+import { eq, exists, sql } from 'drizzle-orm';
 import type { SignUpInput } from '../types/auth.js';
 import type { Roles } from '../types/users.js';
 
@@ -46,7 +46,16 @@ export const usersRepository = {
 
   getUserWithAccount: async () => {
     return db.query.usersTable.findMany({
-      where: { role: { in: ['admin', 'super_admin'] } },
+      where: {
+        role: { in: ['admin', 'super_admin'] },
+        RAW: (table) =>
+          exists(
+            db
+              .select()
+              .from(accountsTable)
+              .where(eq(accountsTable.userId, table.id)),
+          ),
+      },
       columns: {
         username: true,
         email: true,

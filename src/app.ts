@@ -28,7 +28,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, 'public')));
-// measure how much server take to repsonse
+// measure how much server take to response
 app.use(requestLogger);
 
 // check health endpoint
@@ -36,7 +36,7 @@ app.get('/status', async (req, res) => {
   return res.sendStatus(200);
 });
 
-// global sanitization for user respone to exclude sensitive fields
+// global sanitization for user response to exclude sensitive fields
 app.use(sanitizeUserMiddleware);
 
 // routes
